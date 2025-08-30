@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Generador de Contraseñas</title>
+
+  <!-- Manifest y Favicon -->
+  <link rel="manifest" href="manifest.json" />
+  <link rel="icon" href="icon-192.png" type="image/png" />
+  <meta name="theme-color" content="#0d6efd" />
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f2f2f2;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .container {
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.2);
+      max-width: 400px;
+      width: 100%;
+      text-align: center;
+    }
+
+    h1 {
+      margin-bottom: 20px;
+      color: #0d6efd;
+    }
+
+    input[type="number"] {
+      width: 60px;
+      padding: 5px;
+      font-size: 1em;
+    }
+
+    .options {
+      margin: 20px 0;
+      text-align: left;
+    }
+
+    .options label {
+      display: block;
+      margin-bottom: 8px;
+    }
+
+    .password {
+      font-family: monospace;
+      font-size: 1.2em;
+      padding: 10px;
+      background: #e9ecef;
+      border-radius: 5px;
+      margin-top: 10px;
+      word-break: break-all;
+    }
+
+    button {
+      background-color: #0d6efd;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      font-size: 1em;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    button:hover {
+      background-color: #0b5ed7;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Generador de Contraseñas</h1>
+
+    <div class="options">
+      <label>
+        Longitud:
+        <input type="number" id="length" value="12" min="4" max="64" />
+      </label>
+      <label><input type="checkbox" id="uppercase" checked /> Incluir mayúsculas</label>
+      <label><input type="checkbox" id="lowercase" checked /> Incluir minúsculas</label>
+      <label><input type="checkbox" id="numbers" checked /> Incluir números</label>
+      <label><input type="checkbox" id="symbols" checked /> Incluir símbolos</label>
+    </div>
+
+    <button onclick="generatePassword()">Generar contraseña</button>
+
+    <div class="password" id="result">Tu contraseña aparecerá aquí</div>
+  </div>
+
+  <script>
+    function generatePassword() {
+      const length = parseInt(document.getElementById('length').value);
+      const useUppercase = document.getElementById('uppercase').checked;
+      const useLowercase = document.getElementById('lowercase').checked;
+      const useNumbers = document.getElementById('numbers').checked;
+      const useSymbols = document.getElementById('symbols').checked;
+
+      const uppercaseChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+      const lowercaseChars = "abcdefghijklmnopqrstuvwxyz";
+      const numberChars = "0123456789";
+      const symbolChars = "!@#$%^&*()_+~`|}{[]:;?><,./-=";
+
+      let charSet = '';
+      if (useUppercase) charSet += uppercaseChars;
+      if (useLowercase) charSet += lowercaseChars;
+      if (useNumbers) charSet += numberChars;
+      if (useSymbols) charSet += symbolChars;
+
+      if (charSet === '') {
+        document.getElementById('result').textContent = 'Selecciona al menos un tipo de carácter.';
+        return;
+      }
+
+      let password = '';
+      for (let i = 0; i < length; i++) {
+        const randomIndex = Math.floor(Math.random() * charSet.length);
+        password += charSet[randomIndex];
+      }
+
+      document.getElementById('result').textContent = password;
+    }
+
+    // Registrar service worker
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('service-worker.js')
+        .then(() => console.log('Service Worker registrado'))
+        .catch(err => console.error('Error al registrar SW:', err));
+    }
+  </script>
+</body>
+</html>
